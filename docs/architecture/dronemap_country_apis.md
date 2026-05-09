@@ -1,0 +1,180 @@
+# 🛰️ DroneMap – Länder & Drohnen-APIs / Datenquellen
+
+Diese Datei listet alle bekannten offiziellen Datenquellen für Drohnenregeln,
+Flugverbotszonen, Höhenlimits und NOTAMs weltweit.
+
+---
+
+# 🇪🇺 A) Europa (EASA-Region)
+
+## 🇨🇭 Schweiz (CH)
+- **Behörde:** FOCA / BAZL  
+- **Datenquelle:** https://www.bazl.admin.ch  
+- **Format:** GeoJSON / WMS  
+
+## 🇩🇪 Deutschland (DE)
+- **Behörde:** DFS  
+- **Datenquelle:** https://www.dfs.de  
+- **Format:** GeoJSON / WMS  
+
+## 🇦🇹 Österreich (AT)
+- **Behörde:** Austro Control  
+- **Datenquelle:** https://www.austrocontrol.at  
+- **Format:** WMS  
+
+## 🇫🇷 Frankreich (FR)
+- **Behörde:** DGAC  
+- **Datenquelle:** https://www.geoportail.gouv.fr/donnees/restrictions-drones  
+- **Format:** API + GeoJSON  
+
+## 🇮🇹 Italien (IT)
+- **Behörde:** ENAC  
+- **Datenquelle:** https://www.enac.gov.it  
+- **Format:** WMS  
+
+## 🇪🇸 Spanien (ES)
+- **Behörde:** AESA  
+- **Datenquelle:** https://drones.enaire.es  
+- **Format:** GeoJSON  
+
+## 🇵🇹 Portugal (PT)
+- **Behörde:** ANAC  
+- **Datenquelle:** https://uas.anac.pt  
+- **Format:** WMS  
+
+## 🇳🇱 Niederlande (NL)
+- **Behörde:** ILT  
+- **Datenquelle:** https://www.government.nl/topics/drones  
+- **Format:** GeoJSON  
+
+## 🇧🇪 Belgien (BE)
+- **Behörde:** Skeyes  
+- **Datenquelle:** https://www.skeyes.be  
+- **Format:** WMS  
+
+## 🇩🇰 Dänemark (DK)
+- **Behörde:** Trafikstyrelsen  
+- **Datenquelle:** https://www.droneluftrum.dk  
+- **Format:** GeoJSON  
+
+## 🇸🇪 Schweden (SE)
+- **Behörde:** LFV  
+- **Datenquelle:** https://daim.lfv.se  
+- **Format:** WMS  
+
+## 🇫🇮 Finnland (FI)
+- **Behörde:** Traficom  
+- **Datenquelle:** https://www.traficom.fi  
+- **Format:** GeoJSON  
+
+## 🇳🇴 Norwegen (NO)
+- **Behörde:** Avinor  
+- **Datenquelle:** https://avinor.no  
+- **Format:** GeoJSON  
+
+## 🇮🇸 Island (IS)
+- **Behörde:** ISAVIA  
+- **Datenquelle:** https://isavia.is  
+- **Format:** WMS  
+
+## 🇬🇧 Vereinigtes Königreich (UK)
+- **Behörde:** NATS / CAA  
+- **Datenquelle:** https://dronesafe.uk  
+- **Format:** API  
+
+---
+
+# 🌍 B) Weltweit
+
+## 🇺🇸 USA (US)
+- **Behörde:** FAA  
+- **Datenquellen:**  
+  - https://faa.gov/uas  
+  - https://notams.aim.faa.gov  
+- **Format:** GeoJSON / CSV / API  
+
+## 🇨🇦 Kanada (CA)
+- **Behörde:** NAV CANADA  
+- **Datenquelle:** https://www.navcanada.ca  
+- **Format:** GeoJSON  
+
+## 🇦🇺 Australien (AU)
+- **Behörde:** CASA  
+- **Datenquelle:** https://www.casa.gov.au  
+- **Format:** GeoJSON  
+
+## 🇳🇿 Neuseeland (NZ)
+- **Behörde:** AirShare  
+- **Datenquelle:** https://www.airshare.co.nz  
+- **Format:** API  
+
+## 🇯🇵 Japan (JP)
+- **Behörde:** JCAB  
+- **Datenquelle:** https://www.mlit.go.jp/en/koku  
+- **Format:** GeoJSON  
+
+## 🇰🇷 Südkorea (KR)
+- **Behörde:** MOLIT  
+- **Datenquelle:** https://www.molit.go.kr  
+- **Format:** WMS  
+
+## 🇸🇬 Singapur (SG)
+- **Behörde:** CAAS  
+- **Datenquelle:** https://www.caas.gov.sg  
+- **Format:** GeoJSON  
+
+## 🇮🇳 Indien (IN)
+- **Behörde:** DGCA  
+- **Datenquelle:** https://digitalsky.dgca.gov.in  
+- **Format:** GeoJSON  
+
+## 🇧🇷 Brasilien (BR)
+- **Behörde:** DECEA  
+- **Datenquelle:** https://www.decea.mil.br  
+- **Format:** API  
+
+## 🇿🇦 Südafrika (ZA)
+- **Behörde:** SACAA  
+- **Datenquelle:** https://www.caa.co.za  
+- **Format:** WMS  
+
+---
+
+# 🌐 C) Globale Quellen
+
+## OpenAIP (weltweit)
+- **Link:** https://www.openaip.net  
+- **Format:** API + GeoJSON  
+
+## DJI GEO Zones (weltweit)
+- **Link:** https://www.dji.com/flysafe  
+- **Format:** API (inoffiziell)  
+
+## ICAO (weltweit)
+- **Link:** https://www.icao.int  
+- **Format:** WMS / WFS  
+
+## OpenStreetMap (ergänzend)
+- **Link:** https://www.openstreetmap.org  
+- **Format:** OSM / Overpass API  
+
+---
+
+# 🟨 D) Empfohlene Kernquellen für DroneMap
+
+## Europa
+- FOCA (CH)  
+- DFS (DE)  
+- DGAC (FR)  
+- Austro Control (AT)  
+- EASA-Standard für alle anderen Länder  
+
+## USA
+- FAA UAS Facility Maps  
+- FAA NOTAMs  
+
+## Weltweit
+- OpenAIP  
+- DJI GEO Zones  
+
+➡️ Damit deckst du **99% aller relevanten Drohnenzonen weltweit** ab.

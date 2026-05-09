@@ -111,3 +111,22 @@ flowchart TD
     %% Frontend internal flow
     GMAPS --> LAYERS
     LAYERS --> GEOFENCE
+
+
+
+| Land | Behörde | Datenformat |
+| --- | --- | --- |
+| Schweiz | FOCA / BAZL | GeoJSON, WMS |
+| Deutschland | DFS | GeoJSON, WMS |
+| Österreich | Austro Control | WMS |
+| Frankreich | DGAC | API + GeoJSON |
+| Italien | ENAC | WMS |
+| Spanien | AESA | GeoJSON |
+| Portugal | ANAC | WMS |
+| Niederlande | ILT | GeoJSON |
+| Belgien | Skeyes | WMS |
+| Dänemark | Trafikstyrelsen | GeoJSON |
+| Schweden | LFV | WMS |
+| Finnland | Traficom | GeoJSON |
+| Norwegen | Avinor | GeoJSON |
+| UK | NATS / CAA | API |
