@@ -1,170 +1,166 @@
-# DroneMap
+# 🛰️ DroneMap  
+**Weltweite Live-Drohnenkarte mit Flugverbotszonen, Höhenlimits & Echtzeit-Warnungen**
 
-📍 DroneMap – Leitfaden für deine Drohnen‑App / Webplattform
-Kurzidee:  
-DroneMap ist eine Web‑App für Desktop & Smartphone, die Live‑Karten, Drohnen‑Luftraumregeln, Standortinformationen und Flugbeschränkungen weltweit visualisiert. Ziel: Drohnenpiloten sollen jederzeit wissen, wo sie legal fliegen dürfen.
+DroneMap ist eine moderne Web‑App für Desktop & Smartphone, die Drohnenpiloten weltweit zeigt, **wo sie legal fliegen dürfen**.  
+Mit Live‑Karten, internationalen Luftraumdaten, Geofencing‑Warnungen und einer klaren Premium‑UI.
 
-1) Ziel der Plattform
-DroneMap soll:
+---
 
-Live‑Karten anzeigen (Google Maps, Mapbox, OpenStreetMap etc.)
+## 🚀 Features
 
-Drohnen‑Regeln & Flugverbotszonen pro Land integrieren
-(No‑Fly‑Zones, Flughäfen, Naturschutz, Städte, Höhenlimits)
+### 🗺️ Live-Karte
+- Mapbox / Google Maps Integration  
+- Satellit, Terrain, Hybrid  
+- Live-GPS-Standort  
+- Custom Layer für Flugverbotszonen  
 
-Standort des Piloten live anzeigen
+### 🚫 Luftraumdaten (weltweit)
+- **Europa (EASA)**  
+- **Schweiz (BAZL / FOCA)**  
+- **USA (FAA UAS Facility Maps)**  
+- **OpenAIP (weltweit)**  
+- **NOTAMs (Eurocontrol / FAA)**  
+- DJI GEO Zones (optional)
 
-Rechtliche Vorgaben automatisch je nach Land laden
+### ⚠️ Geofencing & Warnungen
+- „Du näherst dich einer NFZ“  
+- Höhenlimits  
+- Temporäre Sperrgebiete  
+- Live-Status: *Safe / Warning / Restricted*
 
-Warnungen geben, wenn man sich einer verbotenen Zone nähert
+### ✈️ Flugplanung (V1+)
+- Route zeichnen  
+- Höhenprofil  
+- Warnungen entlang der Route  
+- Export (PDF/KML) – *Pro*
 
-Mobile & Desktop optimiert sein (PWA‑fähig)
+### 📱 PWA – Mobile & Desktop
+- Offlinefähig (Pro)  
+- Homescreen‑App  
+- Ultra-schnelle UI  
 
-International funktionieren (EU, USA, CH, UK, etc.)
+---
 
-2) Kernfunktionen (MVP)
-🗺️ Kartenintegration
-Google Maps API
-oder
+## 🏗️ Architektur
 
-Mapbox (günstiger, flexibler)
-oder
+### Frontend
+- **Next.js 14 (App Router)**
+- **React**
+- **TailwindCSS + ShadCN**
+- **Mapbox GL**
+- **PWA**
 
-OpenLayers (komplett Open Source)
+### Backend
+- **FastAPI** oder **Node.js**
+- Geo‑Processing Engine  
+- Regel‑Aggregator (EASA, FAA, OpenAIP, FOCA)  
+- Cron‑Jobs für Datenupdates  
 
-Features:
+### Datenbank
+- **PostgreSQL + PostGIS**  
+- GeoJSON‑Storage  
+- Redis Cache  
 
-Zoom, Layer, Satellitenansicht
+---
 
-Standortanzeige (GPS)
+## 📂 Projektstruktur
 
-Geofencing‑Zonen einblenden
+drone-map/
+├── frontend/               # Next.js App
+│   ├── src/
+│   │   ├── app/            # Routing
+│   │   ├── components/     # UI
+│   │   ├── features/       # Map, Zones, Auth
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   └── types/
+│   └── public/
+│
+├── backend/                # FastAPI / Node.js
+│   ├── src/
+│   │   ├── api/            # Endpoints
+│   │   ├── services/       # Business-Logik
+│   │   ├── data/           # Datenquellen
+│   │   ├── geo/            # PostGIS
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   └── workers/        # Cronjobs
+│   └── tests/
+│
+├── database/
+│   ├── migrations/
+│   └── schema.sql
+│
+├── infra/                  # DevOps
+│   ├── docker/
+│   ├── k8s/
+│   ├── terraform/
+│   └── ci-cd/
+│
+└── docs/
+├── architecture/
+├── api/
+├── ui/
+└── roadmap/
 
-🚫 Luftraum‑ & Drohnenregeln
-Du brauchst Datenquellen für:
 
-Europa (EASA‑Region)
-Open Data von EASA
 
-Nationale Datenquellen (z. B. Schweiz: BAZL / FOCA)
+---
 
-USA
-FAA UAS Facility Maps (LAANC)
+## 🧭 Roadmap
 
-FAA UAS Data Hub
+### 🟢 MVP (4–6 Wochen)
+- Karte + Standort  
+- CH/EU/US Zonen  
+- Basis‑Backend  
+- PWA  
+- Info‑Panel  
 
-Weltweit
-OpenAIP (Open Aviation Data)
+### 🔵 Version 1 (2–3 Monate)
+- Weltweite Daten  
+- NOTAMs  
+- Flugplanung  
+- Live‑Warnungen  
+- Account‑System  
 
-Hersteller‑APIs (DJI GEO Zones – eingeschränkt nutzbar)
+### 🟣 Pro Version (3–6 Monate)
+- Offline‑Karten  
+- Export (PDF/KML)  
+- Team‑Funktionen  
+- Firmen‑API  
+- Wetter & Winddaten  
 
-Datenarten:
-No‑Fly‑Zones
+---
 
-Flughäfen
+## 🛠️ Installation
 
-Helikopterlandeplätze
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
 
-Naturschutzgebiete
-
-Militärzonen
-
-Höhenbeschränkungen
-
-Temporäre Sperrgebiete (NOTAMs)
-
-📡 Live‑Daten & Aktualität
-DroneMap soll:
-
-Regelmäßig aktualisierte Daten laden (Cron‑Jobs oder Live‑APIs)
-
-NOTAM‑Daten einbinden (z. B. FAA, Eurocontrol)
-
-Live‑Warnungen anzeigen, wenn sich Regeln ändern
-
-📍 Standort & Navigation
-GPS‑Position des Nutzers anzeigen
-
-Radius‑Warnung: „Du näherst dich einer eingeschränkten Zone“
-
-Höhenlimit‑Anzeige
-
-Optional: Flugplanung (Start → Route → Höhe)
-
-3) Architektur‑Leitfaden
-Frontend
-React / Next.js
-
-oder Vue / Nuxt
-
-Mobile‑optimiert (PWA)
 
 Backend
-Node.js / Express
+bash
+cd backend
+pip install -r requirements.txt
+uvicorn src.main:app --reload
 
-oder Python FastAPI
+Datenbank (PostGIS)
+bash
+docker-compose up -d
 
-Datenaggregation von:
 
-EASA
 
-FAA
+🤝 Mitwirken
+Pull Requests sind willkommen.
+Bitte vorher ein Issue eröffnen, um Änderungen zu diskutieren.
 
-OpenAIP
+📄 Lizenz
+MIT License – frei nutzbar für private & kommerzielle Projekte.
 
-Nationalen Behörden
-
-Datenbank
-PostgreSQL + PostGIS (perfekt für Geodaten)
-
-Alternativ: MongoDB (GeoJSON‑Support)
-
-Hosting
-Vercel / Netlify (Frontend)
-
-Render / Railway / AWS (Backend)
-
-4) Monetarisierung (optional)
-Premium‑Features:
-
-Flugplanung
-
-Offline‑Karten
-
-Export von Flugrouten
-
-Pro‑Version für Firmen (Bau, Inspektion, Immobilien)
-
-Werbung vermeiden → Premium‑Branding
-
-5) Branding
-Name: DroneMap
-Positionierung:  
-„Die weltweit zuverlässigste Live‑Karte für Drohnenpiloten.“
-
-USP:
-
-Echtzeit‑Regeln
-
-Weltweite Abdeckung
-
-Klare, minimalistische UI
-
-Für Hobby‑ und Pro‑Piloten
-
-6) Nächste Schritte (konkret & umsetzbar)
-Kartenanbieter auswählen (Google Maps vs. Mapbox)
-
-Datenquellen pro Land definieren
-
-Backend bauen, das alle Daten sammelt
-
-Frontend‑Prototyp mit Karte + Standort
-
-Layer für Flugverbotszonen integrieren
-
-Live‑Warnungen implementieren
-
-Mobile‑Optimierung / PWA
-
-Beta‑Test mit echten Piloten
+👤 Autor
+Marco Fritsche  
+Drohnenpilot • Entwickler • Premium Branding
+LinkedIn: coming soon
