@@ -1,10 +1,11 @@
-// app/page.tsx
+// app/page.tsx  (Server Component)
+import DroneMapClient from "../components/DroneMapClient";
+
 export default function Page() {
   return (
-    <main style={{ padding: 24, fontFamily: "Inter, system-ui, sans-serif" }}>
+    <main style={{ padding: 24 }}>
       <h1>DroneMap</h1>
-      <p>Willkommen zurück — dies ist die wiederhergestellte Startseite.</p>
-      <p>Wenn du deine originale Seite wiederherstellen willst, füge Komponenten schrittweise hinzu.</p>
+      <DroneMapClient />
     </main>
   );
 }
