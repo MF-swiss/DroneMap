@@ -2,13 +2,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // Offizielle Quellen
-const SOURCES = {
-  CH: "https://data.geo.admin.ch/ch.bazl.luftfahrthindernis/luftfahrthindernis.json", // Schweiz
-  DE: "https://www.dfs.de/dfs-homepage/services/uas/uas-geo-data.json", // Deutschland
-  AT: "https://data.austrocontrol.at/uas/zones.json", // Österreich
-  IT: "https://api.d-flight.it/dzones/geojson", // Italien
-  FR: "https://geoservices.ign.fr/ressources/geoportail/zonage-drones.json", // Frankreich
+const SOURCES: Record<string, string> = {
+  CH: "https://data.geo.admin.ch/ch.bazl.sicherheitszonen-karte/sicherheitszonen.geojson",
+  DE: "https://www.bmdv.bund.de/SharedDocs/Downloads/DE/Drohnen/uas-zonen.geojson",
+  AT: "https://data.austrocontrol.at/uas/zones.geojson",
+  FR: "https://www.geoportail.gouv.fr/carte/ressources/drones/zonage-drones.geojson",
+  IT: "https://raw.githubusercontent.com/drone-map-data/italy-dzones/main/dzones.geojson"
 };
+
+
 
 // Normalisierung in ein einheitliches GeoJSON-Format
 function normalize(data: any, country: string) {

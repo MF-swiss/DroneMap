@@ -2,6 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
+import * as turf from "@turf/turf";
+
+
+type DroneCategory = "A1" | "A2" | "A3" | "SPECIFIC" | "CERTIFIED";
+
 
 export default function DroneMapClient() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +51,7 @@ export default function DroneMapClient() {
       // -----------------------------
       // LAYER-GRUPPEN FÜR KATEGORIEN
       // -----------------------------
-      const layers: Record<'A1'|'A2'|'A3'|'SPECIFIC'|'CERTIFIED', any> = {
+      const layers: Record<DroneCategory, any> = {
         A1: L.layerGroup(),
         A2: L.layerGroup(),
         A3: L.layerGroup(),
@@ -54,7 +59,16 @@ export default function DroneMapClient() {
         CERTIFIED: L.layerGroup(),
       };
 
-      const categoryColors = {
+      L.control.layers(null, {
+        "A1 – Nahe an Menschen": layers.A1,
+        "A2 – Abstand nötig": layers.A2,
+        "A3 – Weit weg von Menschen": layers.A3,
+        "SPECIFIC – Bewilligungspflichtig": layers.SPECIFIC,
+        "CERTIFIED – Hochrisiko": layers.CERTIFIED,
+      }).addTo(map);
+
+
+      const categoryColors: Record<DroneCategory, string> = {
         A1: "green",
         A2: "yellow",
         A3: "orange",
@@ -63,12 +77,7 @@ export default function DroneMapClient() {
       };
 
       // Kategorie bestimmen
-      function getCategory(feature: any) {
-        if (feature?.properties?.category) {
-          const cat = feature.properties.category.toUpperCase();
-          if (layers[cat]) return cat;
-        }
-
+      function getCategory(feature: any): DroneCategory {
         const type = feature?.properties?.zoneType?.toLowerCase() || "";
 
         if (type.includes("restricted")) return "SPECIFIC";
@@ -78,6 +87,7 @@ export default function DroneMapClient() {
         return "A3";
       }
 
+      // GeoJSON layers are created when zones are loaded (see loadZones)
       function getLawText(cat: string) {
         switch (cat) {
           case "A1":
@@ -126,19 +136,111 @@ export default function DroneMapClient() {
 
       async function loadZones(country: string) {
         const res = await fetch(`/api/zones?country=${country}`);
-        const data = await res.json();
 
-        L.geoJSON(data, {
-          style: (feature) => {
+        if (!res.ok) {
+          console.warn("API Fehler für", country);
+          return;
+        }
+
+        let data: any;
+
+        try {
+          data = await res.json();
+        } catch (e) {
+          console.warn("Antwort ist kein JSON für", country);
+          return;
+        }
+
+        console.log("GeoJSON für", country, data);
+
+        if (!data || data.type !== "FeatureCollection" || !Array.isArray(data.features)) {
+          console.warn("Ungültiges GeoJSON für", country, data);
+          return;
+        }
+
+        // -----------------------------
+        // BUFFERING (Linien → Flächen)
+        // -----------------------------
+        const BUFFER_METERS = 200;
+
+        const bufferedFeatures = data.features.map((f: any) => {
+          const type = f.geometry?.type;
+
+          // Linien buffern
+          if (type === "LineString" || type === "MultiLineString") {
+            try {
+              return turf.buffer(f, BUFFER_METERS, { units: "meters" });
+            } catch (e) {
+              console.warn("Buffering fehlgeschlagen:", f);
+              return f;
+            }
+          }
+
+          // Punkte buffern → kleine Kreise
+          if (type === "Point") {
+            try {
+              return turf.buffer(f, BUFFER_METERS / 2, { units: "meters" });
+            } catch (e) {
+              return f;
+            }
+          }
+
+          // Polygone unverändert lassen
+          return f;
+        });
+
+        const bufferedGeoJSON = {
+          type: "FeatureCollection",
+          features: bufferedFeatures
+        };
+
+        // -----------------------------
+        // LEAFLET RENDERING
+        // -----------------------------
+        const geoLayer = L.geoJSON(bufferedGeoJSON, {
+          style: (feature: any) => {
             const cat = getCategory(feature);
+            const type = feature.geometry.type;
+
+            // Linien (falls ungebuffert)
+            if (type === "LineString" || type === "MultiLineString") {
+              return {
+                color: categoryColors[cat],
+                weight: 3,
+                opacity: 0.9
+              };
+            }
+
+            // Punkte (falls ungebuffert)
+            if (type === "Point" || type === "MultiPoint") {
+              return {
+                color: categoryColors[cat],
+                fillColor: categoryColors[cat],
+                fillOpacity: 0.9,
+                radius: 6
+              };
+            }
+
+            // Buffer‑Flächen farbig schattieren
             return {
-              color: categoryColors[cat] || "blue",
+              color: categoryColors[cat],
               weight: 2,
-              fillOpacity: 0.25,
+              fillColor: categoryColors[cat],
+              fillOpacity: 0.35
             };
           },
 
-          onEachFeature: (feature, layer) => {
+          pointToLayer: (feature: any, latlng: any) => {
+            const cat = getCategory(feature);
+            return L.circleMarker(latlng, {
+              radius: 6,
+              color: categoryColors[cat],
+              fillColor: categoryColors[cat],
+              fillOpacity: 0.9
+            });
+          },
+
+          onEachFeature: (feature: any, layer: any) => {
             const cat = getCategory(feature);
             const lawText = getLawText(cat);
 
@@ -149,9 +251,16 @@ export default function DroneMapClient() {
             `);
 
             layers[cat].addLayer(layer);
-          },
+          }
         });
+
+        geoLayer.addTo(map);
       }
+
+
+      
+
+
 
 
       // LayerControl hinzufügen
