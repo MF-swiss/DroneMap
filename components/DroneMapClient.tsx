@@ -8,7 +8,7 @@ import * as turf from "@turf/turf";
 type DroneCategory = "A1" | "A2" | "A3" | "SPECIFIC" | "CERTIFIED";
 
 
-export default function DroneMapClient() {
+export function DroneMapClient() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<any>(null);
   const userMarkerRef = useRef<any>(null);
