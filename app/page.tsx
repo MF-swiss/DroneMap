@@ -1,7 +1,12 @@
-import { Sidebar } from "@/components/Sidebar";
-import { DroneMapClient } from "@/components/DroneMapClient";
+"use client";
+
+import Sidebar from "@/components/Sidebar";
+import { useState } from "react";
+import DroneMapClient from "@/components/DroneMapClient";
 
 export default function HomePage() {
+  const [activeCountries, setActiveCountries] = useState<string[]>([]);
+
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
@@ -21,7 +26,7 @@ export default function HomePage() {
       <main className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside className="w-80 border-r border-slate-800 bg-slate-900/70 backdrop-blur overflow-y-auto">
-          <Sidebar />
+          <Sidebar activeCountries={activeCountries} setActiveCountries={setActiveCountries} />
         </aside>
 
         {/* Map */}

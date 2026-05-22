@@ -83,7 +83,7 @@ export default function DroneMapClient() {
         },
       });
 
-      layer.addTo(mapRef.current);
+      layer.addTo(mapRef.current!);
       layersRef.current[country] = layer;
     });
 
