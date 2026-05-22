@@ -1,64 +1,50 @@
-"use client";
+import { topoLayer } from "@/utils/leafletTopo";
 
-import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import Sidebar from "./Sidebar";
+useEffect(() => {
+  if (!mapRef.current) return;
 
-export default function DroneMapClient() {
-  const mapRef = useRef<L.Map | null>(null);
-  const layersRef = useRef<Record<string, L.LayerGroup>>({});
-  const [activeCountries, setActiveCountries] = useState<string[]>([]);
+  activeCountries.forEach(async (country) => {
+    if (layersRef.current[country]) return;
 
-  // Karte initialisieren
-  useEffect(() => {
-    if (mapRef.current) return;
+    const res = await fetch(`/data/zones_compressed/${country}.topo.json`);
+    const topo = await res.json();
+    const [selectedZone, setSelectedZone] = useState<any>(null);
 
-    const map = L.map("map").setView([47.42, 9.37], 8);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-    mapRef.current = map;
-  }, []);
-
-  // Länder toggeln → Layer laden/entfernen
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    activeCountries.forEach(async (country) => {
-      if (layersRef.current[country]) return;
-
-      const res = await fetch(`/api/zones?country=${country}`);
-      const data = await res.json();
-
-      const layer = L.geoJSON(data, {
-        style: {
-          color: "#ff6600",
-          weight: 2,
-          fillOpacity: 0.3,
-        },
-      });
-
-      layer.addTo(map);
-      layersRef.current[country] = layer;
+    const layer = topoLayer(topo, {
+      style: {
+        color: "#ff6600",
+        weight: 1,
+        fillOpacity: 0.25,
+      },
     });
 
-    Object.keys(layersRef.current).forEach((country) => {
-      if (!activeCountries.includes(country)) {
-        mapRef.current!.removeLayer(layersRef.current[country]);
-        delete layersRef.current[country];
-      }
-    });
-  }, [activeCountries]);
+    layer.addTo(mapRef.current);
+    layersRef.current[country] = layer;
+  });
 
-  return (
-    <div className="flex h-full w-full">
-      <Sidebar
-        activeCountries={activeCountries}
-        setActiveCountries={setActiveCountries}
-      />
+  {selectedZone && (
+  <div className="absolute bottom-4 right-4 bg-white shadow-xl p-4 rounded-lg w-64 z-[9999]">
+    <h3 className="font-bold text-lg mb-2">{selectedZone.name}</h3>
 
-      <div id="map" className="flex-1 h-screen" />
-    </div>
-  );
-}
+    <p><strong>Typ:</strong> {selectedZone.type}</p>
+    <p><strong>Land:</strong> {selectedZone.country}</p>
+    <p><strong>Quelle:</strong> {selectedZone.source}</p>
+
+    <button
+      className="mt-3 px-3 py-1 bg-gray-300 rounded"
+      onClick={() => setSelectedZone(null)}
+    >
+      Schließen
+    </button>
+  </div>
+)}
+
+
+  Object.keys(layersRef.current).forEach((country) => {
+    if (!activeCountries.includes(country)) {
+      mapRef.current!.removeLayer(layersRef.current[country]);
+      delete layersRef.current[country];
+    }
+  });
+}, [activeCountries]);

@@ -1,4 +1,4 @@
-name: Update DroneMap Zones
+name: Update Drone Zones
 
 on:
   schedule:
@@ -15,16 +15,21 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
 
-      - run: npm install
+      - name: Install dependencies
+        run: npm install
 
-      - run: npm run update:zones
+      - name: Update zones
+        run: npx ts-node scripts/updateZones.ts
+
+      - name: Compress zones
+        run: npx ts-node scripts/compress.ts
 
       - name: Commit changes
         run: |
-          git config --global user.name "DroneMap Bot"
-          git config --global user.email "bot@dronemap"
-          git add .
+          git config user.name "DroneMap Bot"
+          git config user.email "bot@dronemap"
+          git add data/zones data/zones_compressed
           git commit -m "Auto-update zones" || echo "No changes"
           git push
