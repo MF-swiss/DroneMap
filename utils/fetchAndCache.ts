@@ -1,7 +1,7 @@
 // utils/fetchAndCache.ts
 import fs from "fs";
 import path from "path";
-import unzipper from "unzipper";
+import AdmZip from "adm-zip";
 
 const CACHE_DIR = path.join(process.cwd(), "data/zones");
 if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
@@ -25,12 +25,12 @@ export async function fetchAndCache(country: string, url: string) {
 
   // 3. ZIP erkennen
   if (buffer.slice(0, 2).toString() === "PK") {
-    const directory = await unzipper.Open.buffer(buffer);
-    const file = directory.files.find((f) => f.path.endsWith(".geojson"));
+    const zip = new AdmZip(buffer);
+    const file = zip.getEntries().find((f) => f.entryName.endsWith(".geojson"));
 
     if (!file) throw new Error("ZIP enthält kein GeoJSON");
 
-    const content = await file.buffer();
+    const content = file.getData();
     const json = JSON.parse(content.toString("utf8"));
     fs.writeFileSync(cacheFile, JSON.stringify(json));
     return json;
