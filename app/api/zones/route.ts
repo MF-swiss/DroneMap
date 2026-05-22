@@ -13,7 +13,10 @@ export async function GET(req: Request) {
   const filePath = path.join(process.cwd(), "data/zones", `${country}.json`);
 
   if (!fs.existsSync(filePath)) {
-    return NextResponse.json({ error: "No local data for country" }, { status: 404 });
+    return NextResponse.json(
+      { error: "No data for country" },
+      { status: 404 }
+    );
   }
 
   const json = JSON.parse(fs.readFileSync(filePath, "utf8"));
