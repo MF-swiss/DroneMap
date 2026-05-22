@@ -1,12 +1,11 @@
 export const zoneColors: Record<string, string> = {
-  controlled: "#0066ff",   // CTR
-  nofly: "#ff0000",         // NFZ
-  danger: "#ff9900",        // Danger Area
-  restricted: "#cc00ff",    // Restricted Area
-  unknown: "#999999"
+  controlled: "#0066ff",
+  nofly: "#ff0000",
+  danger: "#ff9900",
+  restricted: "#cc00ff",
+  unknown: "#999999",
 };
 
 export function getZoneColor(type: string) {
-  const key = type.toLowerCase();
-  return zoneColors[key] || zoneColors.unknown;
+  return zoneColors[type?.toLowerCase()] || zoneColors.unknown;
 }

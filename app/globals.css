@@ -21,3 +21,13 @@ html, body, #__next {
   background: var(--bg);
   color: var(--fg);
 }
+
+.leaflet-highlight {
+  animation: highlightPulse 0.8s ease-out;
+}
+
+@keyframes highlightPulse {
+  0% { stroke-width: 1; opacity: 1; }
+  50% { stroke-width: 4; opacity: 0.6; }
+  100% { stroke-width: 1; opacity: 1; }
+}

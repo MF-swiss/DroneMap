@@ -9,6 +9,7 @@
     "update:zones": "ts-node scripts/updateZones.ts"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "adm-zip": "^0.5.10",
     "leaflet": "^1.9.4",
     "next": "^14.2.35",

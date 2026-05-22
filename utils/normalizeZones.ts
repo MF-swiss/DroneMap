@@ -51,6 +51,33 @@ export function normalizeZones(
           p.CLASS ||
           "unknown";
 
+        const height =
+          p.height ||
+          p.maxHeight ||
+          p.altitudeLimit ||
+          p.ALTITUDE ||
+          null;
+
+        const rules =
+          p.rules ||
+          p.category ||
+          p.flightRules ||
+          p.FLIGHT_RULES ||
+          null;
+
+        const description =
+          p.description ||
+          p.DESCRIPTION ||
+          p.info ||
+          null;
+
+        const link =
+          p.link ||
+          p.url ||
+          p.sourceUrl ||
+          null;
+
+
         return {
           type: "Feature",
           geometry: f.geometry,
