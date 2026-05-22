@@ -7,19 +7,18 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [12.485, 41.890],
-            [12.495, 41.890],
-            [12.495, 41.897],
-            [12.485, 41.897],
-            [12.485, 41.890]
+            [12.470, 41.885],
+            [12.510, 41.885],
+            [12.510, 41.905],
+            [12.470, 41.905],
+            [12.470, 41.885]
           ]
         ]
       },
       "properties": {
         "country": "IT",
-        "name": "Rome NFZ",
-        "zoneType": "restricted",
-        "rules": {}
+        "name": "Rome Restricted Zone",
+        "zoneType": "restricted"
       }
     }
   ]
