@@ -1,11 +1,8 @@
-export const zoneColors: Record<string, string> = {
-  controlled: "#0066ff",
-  nofly: "#ff0000",
-  danger: "#ff9900",
-  restricted: "#cc00ff",
-  unknown: "#999999",
-};
-
 export function getZoneColor(type: string) {
-  return zoneColors[type?.toLowerCase()] || zoneColors.unknown;
+  switch (type) {
+    case "restricted": return "#ff0000";
+    case "warning": return "#ff9900";
+    case "info": return "#0066ff";
+    default: return "#888888";
+  }
 }

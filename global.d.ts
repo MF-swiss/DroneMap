@@ -1,4 +1,3 @@
-declare module "adm-zip";
+declare module "topojson-client";
 declare module "topojson-server";
 declare module "topojson-simplify";
-declare module "topojson-client";

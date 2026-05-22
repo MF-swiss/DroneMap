@@ -1,33 +1,23 @@
-/* app/globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
-/* stylelint-disable-next-line */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-/* deine weiteren globalen Styles */
-
-
-:root {
-  --bg: #ffffff;
-  --fg: #0f172a;
-}
-
-html, body, #__next {
+html, body {
   height: 100%;
   margin: 0;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: var(--bg);
-  color: var(--fg);
+  padding: 0;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
 }
 
 .leaflet-highlight {
-  animation: highlightPulse 0.8s ease-out;
+  animation: highlight 0.8s ease-out;
 }
 
-@keyframes highlightPulse {
-  0% { stroke-width: 1; opacity: 1; }
-  50% { stroke-width: 4; opacity: 0.6; }
-  100% { stroke-width: 1; opacity: 1; }
+@keyframes highlight {
+  0% { stroke-width: 3px; stroke: yellow; }
+  100% { stroke-width: 1px; stroke: inherit; }
 }

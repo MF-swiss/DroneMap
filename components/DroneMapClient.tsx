@@ -14,13 +14,78 @@ import {
   MapPinIcon,
 } from "@heroicons/react/24/solid";
 
+const ALL_COUNTRIES = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
+
 export default function DroneMapClient() {
   const mapRef = useRef<L.Map | null>(null);
   const layersRef = useRef<Record<string, L.LayerGroup>>({});
   const [activeCountries, setActiveCountries] = useState<string[]>([]);
   const [selectedZone, setSelectedZone] = useState<any>(null);
 
-  // Smooth FlyTo Animation
+  // Auto-load all countries
+  useEffect(() => {
+    if (activeCountries.length === 0) {
+      setActiveCountries(ALL_COUNTRIES);
+    }
+  }, []);
+
+  // Init map
+  useEffect(() => {
+    if (mapRef.current) return;
+
+    const map = L.map("map").setView([47.42, 9.37], 6);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+    }).addTo(map);
+
+    mapRef.current = map;
+  }, []);
+
+  // Load/unload countries
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    activeCountries.forEach(async (country) => {
+      if (layersRef.current[country]) return;
+
+      const res = await fetch(`/data/zones_compressed/${country}.topo.json`);
+      const topo = await res.json();
+
+      const layer = topoLayer(topo, {
+        style: (feature: any) => ({
+          color: getZoneColor(feature.properties.zoneType),
+          weight: 1,
+          fillOpacity: 0.25,
+        }),
+        onEachFeature: (feature: any, layer: any) => {
+          layer.on("click", () => {
+            const el = layer.getElement();
+            if (el) {
+              el.classList.add("leaflet-highlight");
+              setTimeout(() => el.classList.remove("leaflet-highlight"), 800);
+            }
+
+            setSelectedZone({
+              ...feature.properties,
+              geometry: feature.geometry,
+            });
+          });
+        },
+      });
+
+      layer.addTo(mapRef.current!);
+      layersRef.current[country] = layer;
+    });
+
+    Object.keys(layersRef.current).forEach((country) => {
+      if (!activeCountries.includes(country)) {
+        mapRef.current!.removeLayer(layersRef.current[country]);
+        delete layersRef.current[country];
+      }
+    });
+  }, [activeCountries]);
+
   function flyToZone(feature: any) {
     if (!mapRef.current) return;
 
@@ -34,85 +99,19 @@ export default function DroneMapClient() {
     });
   }
 
-  // Karte initialisieren
-  useEffect(() => {
-    if (mapRef.current) return;
-
-    const map = L.map("map").setView([47.42, 9.37], 7);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-    }).addTo(map);
-
-    mapRef.current = map;
-  }, []);
-
-  // Länder laden / entfernen
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    activeCountries.forEach(async (country) => {
-      if (layersRef.current[country]) return;
-
-      const res = await fetch(
-        `/data/zones_compressed/${country}.topo.json`
-      );
-      const topo = await res.json();
-
-      const layer = topoLayer(topo, {
-        style: (feature: any) => ({
-          color: getZoneColor(feature.properties.zoneType),
-          weight: 1,
-          fillOpacity: 0.25,
-        }),
-        onEachFeature: (feature: any, layer: any) => {
-          layer.on("click", () => {
-            // Highlight Animation
-            const el = layer.getElement();
-            if (el) {
-              el.classList.add("leaflet-highlight");
-              setTimeout(() => el.classList.remove("leaflet-highlight"), 800);
-            }
-
-            // Info Panel öffnen
-            setSelectedZone({
-              ...feature.properties,
-              geometry: feature.geometry,
-            });
-          });
-        },
-      });
-
-      layer.addTo(mapRef.current!);
-      layersRef.current[country] = layer;
-    });
-
-    // Entfernen nicht aktiver Länder
-    Object.keys(layersRef.current).forEach((country) => {
-      if (!activeCountries.includes(country)) {
-        mapRef.current!.removeLayer(layersRef.current[country]);
-        delete layersRef.current[country];
-      }
-    });
-  }, [activeCountries]);
-
   return (
     <div className="flex h-screen w-full relative">
 
-      {/* Sidebar */}
       <Sidebar
         activeCountries={activeCountries}
         setActiveCountries={setActiveCountries}
       />
 
-      {/* Karte */}
       <div id="map" className="flex-1 h-full" />
 
-      {/* Info-Panel */}
       {selectedZone && (
-        <div className="absolute bottom-4 right-4 bg-white shadow-2xl p-5 rounded-xl w-80 z-[9999] border border-gray-200">
+        <div className="absolute bottom-4 right-4 bg-white text-black shadow-2xl p-5 rounded-xl w-80 z-[9999] border border-gray-200">
 
-          {/* Header */}
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-bold text-xl">{selectedZone.name}</h3>
             <XMarkIcon
@@ -121,7 +120,6 @@ export default function DroneMapClient() {
             />
           </div>
 
-          {/* Details */}
           <div className="space-y-2 text-sm">
             <p><strong>Typ:</strong> {selectedZone.type}</p>
             <p><strong>Land:</strong> {selectedZone.country}</p>
@@ -150,7 +148,6 @@ export default function DroneMapClient() {
             )}
           </div>
 
-          {/* FlyTo Button */}
           <button
             onClick={() => flyToZone(selectedZone)}
             className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700"

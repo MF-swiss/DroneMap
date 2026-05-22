@@ -3,22 +3,23 @@ type SidebarProps = {
   setActiveCountries: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
+const ALL_COUNTRIES = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
+
 export default function Sidebar({ activeCountries, setActiveCountries }: SidebarProps) {
-  const countries = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
 
   function toggleCountry(code: string) {
-    setActiveCountries((prev: string[]) =>
+    setActiveCountries((prev) =>
       prev.includes(code)
-        ? prev.filter((c: string) => c !== code)
+        ? prev.filter((c) => c !== code)
         : [...prev, code]
     );
   }
 
   return (
-    <div className="p-4 w-64 bg-white shadow-lg z-50 h-screen overflow-y-auto">
+    <div className="p-4 w-64 bg-white text-black shadow-lg z-50 h-screen overflow-y-auto">
       <h2 className="font-bold mb-4">Länder</h2>
 
-      {countries.map((code) => (
+      {ALL_COUNTRIES.map((code) => (
         <button
           key={code}
           onClick={() => toggleCountry(code)}

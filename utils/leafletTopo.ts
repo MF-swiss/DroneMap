@@ -1,4 +1,3 @@
-// utils/leafletTopo.ts
 import L from "leaflet";
 import { feature } from "topojson-client";
 
