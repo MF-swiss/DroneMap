@@ -24,10 +24,7 @@ export default function HomePage() {
 
       {/* Content */}
       <main className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-80 border-r border-slate-800 bg-slate-900/70 backdrop-blur overflow-y-auto">
-          <Sidebar activeCountries={activeCountries} setActiveCountries={setActiveCountries} />
-        </aside>
+
 
         {/* Map */}
         <section className="flex-1 relative">
