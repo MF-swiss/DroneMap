@@ -282,11 +282,16 @@ export function DroneMapClient() {
       layers.CERTIFIED.addTo(map);
 
       // Länder laden
+      /*
       await loadZones("CH");
       await loadZones("DE");
       await loadZones("AT");
       await loadZones("IT");
       await loadZones("FR");
+      */
+      loadZones("CH"); // oder das Land, das du sehen willst
+
+
 
       // -----------------------------
       // LIVE-STANDORT
