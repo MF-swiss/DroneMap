@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [12.485, 41.890],
+            [12.495, 41.890],
+            [12.495, 41.897],
+            [12.485, 41.897],
+            [12.485, 41.890]
+          ]
+        ]
+      },
+      "properties": {
+        "country": "IT",
+        "name": "Rome NFZ",
+        "zoneType": "restricted",
+        "rules": {}
+      }
+    }
+  ]
+}

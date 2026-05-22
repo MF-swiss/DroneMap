@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [16.365, 48.198],
+            [16.375, 48.198],
+            [16.375, 48.205],
+            [16.365, 48.205],
+            [16.365, 48.198]
+          ]
+        ]
+      },
+      "properties": {
+        "country": "AT",
+        "name": "Vienna NFZ",
+        "zoneType": "no-fly",
+        "rules": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [13.375, 52.506],
+            [13.385, 52.506],
+            [13.385, 52.512],
+            [13.375, 52.512],
+            [13.375, 52.506]
+          ]
+        ]
+      },
+      "properties": {
+        "country": "DE",
+        "name": "Berlin Restricted Zone",
+        "zoneType": "restricted",
+        "rules": {}
+      }
+    }
+  ]
+}

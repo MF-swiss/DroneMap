@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.345, 48.853],
+            [2.355, 48.853],
+            [2.355, 48.860],
+            [2.345, 48.860],
+            [2.345, 48.853]
+          ]
+        ]
+      },
+      "properties": {
+        "country": "FR",
+        "name": "Paris Red Zone",
+        "zoneType": "forbidden",
+        "rules": {}
+      }
+    }
+  ]
+}

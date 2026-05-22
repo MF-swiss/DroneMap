@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [8.548, 47.458],
+            [8.552, 47.458],
+            [8.552, 47.461],
+            [8.548, 47.461],
+            [8.548, 47.458]
+          ]
+        ]
+      },
+      "properties": {
+        "country": "CH",
+        "name": "LSZH CTR",
+        "zoneType": "controlled",
+        "rules": {}
+      }
+    }
+  ]
+}
