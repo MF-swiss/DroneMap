@@ -3,5 +3,9 @@
 import DroneMapClient from "./DroneMapClient";
 
 export default function DroneMap() {
-  return <DroneMapClient />;
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <DroneMapClient />
+    </div>
+  );
 }

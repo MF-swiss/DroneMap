@@ -51,6 +51,7 @@ async function loadRaw(cfg: SourceCfg) {
     const entry =
       zip.getEntries().find((e: any) => e.entryName.endsWith(".geojson")) ||
       zip.getEntries().find((e: any) => e.entryName.endsWith(".json"));
+    if (!entry) throw new Error("Keine GeoJSON/JSON-Datei im ZIP gefunden");
     return JSON.parse(entry.getData().toString("utf8"));
   }
 

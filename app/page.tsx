@@ -3,5 +3,9 @@
 import DroneMap from "@/components/DroneMap";
 
 export default function Page() {
-  return <DroneMap />;
+  return (
+    <div className="h-screen w-screen overflow-hidden">
+      <DroneMap />
+    </div>
+  );
 }
