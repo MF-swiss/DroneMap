@@ -2,9 +2,10 @@
 import fs from "fs";
 import path from "path";
 import AdmZip from "adm-zip";
-import fetch from "node-fetch";
+
 import { normalizeZones } from "../utils/normalizeZones";
 
+const res = await fetch(url);
 const OUT_DIR = path.join(process.cwd(), "data/zones");
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -72,13 +73,17 @@ async function fetchBuffer(url: string) {
 
 async function handleZip(buf: Buffer): Promise<any> {
   const zip = new AdmZip(buf);
+
   const entry =
-    zip.getEntries().find(e => e.entryName.endsWith(".geojson")) ||
-    zip.getEntries().find(e => e.entryName.endsWith(".json"));
+    zip.getEntries().find((e: any) => e.entryName.endsWith(".geojson")) ||
+    zip.getEntries().find((e: any) => e.entryName.endsWith(".json"));
+
   if (!entry) throw new Error("ZIP enthält kein GeoJSON/JSON");
+
   const content = entry.getData().toString("utf8");
   return JSON.parse(content);
 }
+
 
 // Platzhalter – falls du später echte WMS→GeoJSON Konvertierung einbaust
 async function handleWms(_url: string): Promise<any> {
@@ -104,27 +109,8 @@ async function updateCountry(code: string, cfg: { url: string; type: string }) {
       }
 
       raw = JSON.parse(text);
-    } else if (cfg.type === "wms") {
-      raw = await handleWms(cfg.url);
-    } else {
-      throw new Error(`Unbekannter Typ: ${cfg.type}`);
     }
 
-    const normalized = normalizeZones(raw, code);
-
-    fs.writeFileSync(outFile, JSON.stringify(normalized));
-    console.log(`[${code}] OK – ${normalized.features.length} Features gespeichert.`);
-  } catch (err: any) {
-    console.error(`[${code}] FEHLER:`, err.message || err);
-    if (!fs.existsSync(outFile)) {
-      fs.writeFileSync(
-        outFile,
-        JSON.stringify({ type: "FeatureCollection", features: [] })
-      );
-      console.log(`[${code}] Fallback: leere FeatureCollection geschrieben.`);
-    }
-  }
-}
 
 (async () => {
   console.log("=== DroneMap EU Zonen Update ===");

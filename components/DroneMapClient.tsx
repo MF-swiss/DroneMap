@@ -22,7 +22,8 @@ export default function DroneMapClient() {
 
   // Länder toggeln → Layer laden/entfernen
   useEffect(() => {
-    if (!mapRef.current) return;
+    const map = mapRef.current;
+    if (!map) return;
 
     activeCountries.forEach(async (country) => {
       if (layersRef.current[country]) return;
@@ -38,7 +39,7 @@ export default function DroneMapClient() {
         },
       });
 
-      layer.addTo(mapRef.current);
+      layer.addTo(map);
       layersRef.current[country] = layer;
     });
 

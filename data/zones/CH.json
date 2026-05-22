@@ -1,5 +1,17 @@
-export async function GET(req: Request) {
-  const country = new URL(req.url).searchParams.get("country")?.toUpperCase();
-  const file = path.join(process.cwd(), "data/zones", `${country}.json`);
-  return NextResponse.json(JSON.parse(fs.readFileSync(file, "utf8")));
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[8.529,47.464],[8.573,47.464],[8.573,47.490],[8.529,47.490],[8.529,47.464]]]
+      },
+      "properties": {
+        "country": "CH",
+        "name": "LSZH CTR",
+        "zoneType": "controlled"
+      }
+    }
+  ]
 }

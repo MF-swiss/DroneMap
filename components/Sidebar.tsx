@@ -1,10 +1,15 @@
-export default function Sidebar({ activeCountries, setActiveCountries }) {
+type SidebarProps = {
+  activeCountries: string[];
+  setActiveCountries: React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+export default function Sidebar({ activeCountries, setActiveCountries }: SidebarProps) {
   const countries = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
 
   function toggleCountry(code: string) {
-    setActiveCountries((prev) =>
+    setActiveCountries((prev: string[]) =>
       prev.includes(code)
-        ? prev.filter((c) => c !== code)
+        ? prev.filter((c: string) => c !== code)
         : [...prev, code]
     );
   }
