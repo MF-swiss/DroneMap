@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import unzipper from "unzipper";
+import AdmZip from "adm-zip";
 
 const SOURCES: Record<string, string> = {
   CH: "https://data.geo.admin.ch/ch.bazl.sicherheitszonen-karte/sicherheitszonen.geojson",
@@ -21,7 +21,6 @@ async function fetchAndCache(country: string, url: string) {
   if (fs.existsSync(cacheFile)) {
     const stats = fs.statSync(cacheFile);
     const ageHours = (Date.now() - stats.mtimeMs) / 1000 / 3600;
-
     if (ageHours < 24) {
       return JSON.parse(fs.readFileSync(cacheFile, "utf8"));
     }
@@ -32,19 +31,19 @@ async function fetchAndCache(country: string, url: string) {
 
   // ZIP erkennen
   if (buffer.slice(0, 2).toString() === "PK") {
-    const directory = await unzipper.Open.buffer(buffer);
-    const file = directory.files.find((f) => f.path.endsWith(".geojson"));
-    if (!file) throw new Error("ZIP enthält kein GeoJSON");
+    const zip = new AdmZip(buffer);
+    const entry = zip.getEntries().find((e) => e.entryName.endsWith(".geojson"));
+    if (!entry) throw new Error("ZIP enthält kein GeoJSON");
 
-    const content = await file.buffer();
-    const json = JSON.parse(content.toString("utf8"));
+    const content = entry.getData().toString("utf8");
+    const json = JSON.parse(content);
+
     fs.writeFileSync(cacheFile, JSON.stringify(json));
     return json;
   }
 
-  const text = buffer.toString("utf8");
-
   // HTML erkennen
+  const text = buffer.toString("utf8");
   if (text.startsWith("<")) {
     throw new Error("Quelle liefert HTML statt GeoJSON");
   }
