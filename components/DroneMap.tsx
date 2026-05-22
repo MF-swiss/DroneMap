@@ -11,5 +11,12 @@ export default function DroneMap() {
     return () => map.remove();
   }, []);
 
+  <Sidebar
+  activeCountries={activeCountries}
+  setActiveCountries={setActiveCountries}
+  />
+
+  <div ref={mapRef} className="w-full h-full" />
+
   return <div id="map" style={{ height: "600px", width: "100%" }} />;
 }

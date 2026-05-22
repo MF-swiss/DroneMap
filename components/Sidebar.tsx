@@ -1,52 +1,31 @@
-"use client";
+export default function Sidebar({ activeCountries, setActiveCountries }) {
+  const countries = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
 
-import { useState } from "react";
-
-const COUNTRIES = ["CH", "DE", "AT", "FR", "IT"] as const;
-
-export function Sidebar() {
-  const [selected, setSelected] = useState<string>("CH");
+  function toggleCountry(code: string) {
+    setActiveCountries((prev) =>
+      prev.includes(code)
+        ? prev.filter((c) => c !== code)
+        : [...prev, code]
+    );
+  }
 
   return (
-    <div className="p-4 space-y-6">
-      <div>
-        <h2 className="text-sm font-semibold text-slate-200 mb-2">
-          Länder
-        </h2>
-        <div className="grid grid-cols-3 gap-2">
-          {COUNTRIES.map((c) => (
-            <button
-              key={c}
-              onClick={() => setSelected(c)}
-              className={`text-xs px-2 py-1 rounded border ${
-                selected === c
-                  ? "bg-emerald-500 text-slate-900 border-emerald-400"
-                  : "border-slate-700 text-slate-300 hover:border-slate-500"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="p-4 w-64 bg-white shadow-lg z-50 h-screen overflow-y-auto">
+      <h2 className="font-bold mb-4">Länder</h2>
 
-      <div>
-        <h2 className="text-sm font-semibold text-slate-200 mb-2">
-          Kategorien
-        </h2>
-        <ul className="space-y-1 text-xs text-slate-300">
-          <li><span className="inline-block w-3 h-3 rounded bg-green-500 mr-2" />A1 – Nahe an Menschen</li>
-          <li><span className="inline-block w-3 h-3 rounded bg-yellow-400 mr-2" />A2 – Abstand nötig</li>
-          <li><span className="inline-block w-3 h-3 rounded bg-orange-500 mr-2" />A3 – Weit weg</li>
-          <li><span className="inline-block w-3 h-3 rounded bg-red-500 mr-2" />SPECIFIC – Bewilligung</li>
-          <li><span className="inline-block w-3 h-3 rounded bg-purple-500 mr-2" />CERTIFIED – Hochrisiko</li>
-        </ul>
-      </div>
-
-      <div className="text-[11px] text-slate-500 border-t border-slate-800 pt-3">
-        Daten: Offizielle Quellen + Normalisierung<br />
-        Ansicht: Nur informativ, keine Rechtsberatung.
-      </div>
+      {countries.map((code) => (
+        <button
+          key={code}
+          onClick={() => toggleCountry(code)}
+          className={`w-full text-left px-3 py-2 mb-2 rounded ${
+            activeCountries.includes(code)
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200"
+          }`}
+        >
+          {code}
+        </button>
+      ))}
     </div>
   );
 }
