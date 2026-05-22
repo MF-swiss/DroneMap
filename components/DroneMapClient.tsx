@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-
 import Sidebar from "./Sidebar";
 import { topoLayer } from "@/utils/leafletTopo";
 import { getZoneColor } from "@/utils/colors";
@@ -14,11 +11,11 @@ import {
   MapPinIcon,
 } from "@heroicons/react/24/solid";
 
-const ALL_COUNTRIES = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
+const ALL_COUNTRIES = ["CH","DE","AT","FR","IT","ES","NL","BE","DK","NO","SE","FI"];
 
 export default function DroneMapClient() {
-  const mapRef = useRef<L.Map | null>(null);
-  const layersRef = useRef<Record<string, L.LayerGroup>>({});
+  const mapRef = useRef<any>(null);
+  const layersRef = useRef<Record<string, any>>({});
   const [activeCountries, setActiveCountries] = useState<string[]>([]);
   const [selectedZone, setSelectedZone] = useState<any>(null);
 
@@ -31,71 +28,88 @@ export default function DroneMapClient() {
 
   // Init map
   useEffect(() => {
-    if (mapRef.current) return;
+    async function init() {
+      const L = await import("leaflet");
+      await import("leaflet/dist/leaflet.css");
 
-    const map = L.map("map").setView([47.42, 9.37], 6);
+      if (!mapRef.current) {
+        const map = L.map("map").setView([47.42, 9.37], 6);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-    }).addTo(map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+        }).addTo(map);
 
-    mapRef.current = map;
+        mapRef.current = map;
+      }
+    }
+
+    init();
   }, []);
 
   // Load/unload countries
   useEffect(() => {
-    if (!mapRef.current) return;
+    async function load() {
+      if (!mapRef.current) return;
 
-    activeCountries.forEach(async (country) => {
-      if (layersRef.current[country]) return;
+      const L = await import("leaflet");
 
-      const res = await fetch(`/data/zones_compressed/${country}.topo.json`);
-      const topo = await res.json();
+      activeCountries.forEach(async (country) => {
+        if (layersRef.current[country]) return;
 
-      const layer = topoLayer(topo, {
-        style: (feature: any) => ({
-          color: getZoneColor(feature.properties.zoneType),
-          weight: 1,
-          fillOpacity: 0.25,
-        }),
-        onEachFeature: (feature: any, layer: any) => {
-          layer.on("click", () => {
-            const el = layer.getElement();
-            if (el) {
-              el.classList.add("leaflet-highlight");
-              setTimeout(() => el.classList.remove("leaflet-highlight"), 800);
-            }
+        const res = await fetch(`/data/zones_compressed/${country}.topo.json`);
+        if (!res.ok) return;
 
-            setSelectedZone({
-              ...feature.properties,
-              geometry: feature.geometry,
+        const topo = await res.json();
+
+        const layer = await topoLayer(topo, {
+          style: (feature: any) => ({
+            color: getZoneColor(feature.properties.zoneType),
+            weight: 1,
+            fillOpacity: 0.25,
+          }),
+          onEachFeature: (feature: any, layer: any) => {
+            layer.on("click", () => {
+              const el = layer.getElement();
+              if (el) {
+                el.classList.add("leaflet-highlight");
+                setTimeout(() => el.classList.remove("leaflet-highlight"), 800);
+              }
+
+              setSelectedZone({
+                ...feature.properties,
+                geometry: feature.geometry,
+              });
             });
-          });
-        },
+          },
+        });
+
+        layer.addTo(mapRef.current);
+        layersRef.current[country] = layer;
       });
 
-      layer.addTo(mapRef.current!);
-      layersRef.current[country] = layer;
-    });
+      Object.keys(layersRef.current).forEach((country) => {
+        if (!activeCountries.includes(country)) {
+          mapRef.current.removeLayer(layersRef.current[country]);
+          delete layersRef.current[country];
+        }
+      });
+    }
 
-    Object.keys(layersRef.current).forEach((country) => {
-      if (!activeCountries.includes(country)) {
-        mapRef.current!.removeLayer(layersRef.current[country]);
-        delete layersRef.current[country];
-      }
-    });
+    load();
   }, [activeCountries]);
 
   function flyToZone(feature: any) {
-    if (!mapRef.current) return;
+    import("leaflet").then((L) => {
+      if (!mapRef.current) return;
 
-    const bounds = L.geoJSON(feature).getBounds();
-    const center = bounds.getCenter();
+      const bounds = L.geoJSON(feature).getBounds();
+      const center = bounds.getCenter();
 
-    mapRef.current.flyTo(center, 13, {
-      animate: true,
-      duration: 1.4,
-      easeLinearity: 0.25,
+      mapRef.current.flyTo(center, 13, {
+        animate: true,
+        duration: 1.4,
+        easeLinearity: 0.25,
+      });
     });
   }
 

@@ -3,7 +3,7 @@ type SidebarProps = {
   setActiveCountries: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const ALL_COUNTRIES = ["CH", "DE", "AT", "FR", "IT", "ES", "NL", "BE", "DK", "NO", "SE", "FI"];
+const ALL_COUNTRIES = ["CH","DE","AT","FR","IT","ES","NL","BE","DK","NO","SE","FI"];
 
 export default function Sidebar({ activeCountries, setActiveCountries }: SidebarProps) {
 

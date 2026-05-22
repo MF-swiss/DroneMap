@@ -1,0 +1,37 @@
+{
+  "type": "Topology",
+  "transform": {
+    "scale": [0.0001, 0.0001],
+    "translate": [0, 0]
+  },
+  "objects": {
+    "zones": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "properties": {
+            "name": "Zonenname",
+            "country": "DK",
+            "zoneType": "restricted",
+            "height": 120,
+            "rules": "Beschreibung der Flugregeln",
+            "source": "Behörde / Quelle",
+            "description": "Zusätzliche Infos",
+            "link": "https://example.com"
+          },
+          "arcs": [[0]]
+        }
+      ]
+    }
+  },
+  "arcs": [
+    [
+      [0, 0],
+      [10, 0],
+      [0, 10],
+      [-10, 0],
+      [0, -10]
+    ]
+  ]
+}
