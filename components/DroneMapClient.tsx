@@ -6,73 +6,49 @@ import { topoLayer } from "@/utils/leafletTopo";
 
 const ALL_COUNTRIES = ["CH","DE","AT","FR","IT","ES","NL","BE","DK","NO","SE","FI"];
 
-// EU 2019/947 Zonentypen
 export const ZONE_TYPES: Record<string, {
-  label: string;
-  short: string;
-  color: string;
-  badgeBg: string;
-  badgeText: string;
-  desc: string;
-  rules: string[];
-  cats: string[];
+  label: string; short: string; color: string;
+  badgeBg: string; badgeText: string; desc: string;
+  rules: string[]; cats: string[];
 }> = {
   NFZ: {
-    label: "Flugverbot (No-Fly)",
-    short: "NFZ",
-    color: "#dc2626",
-    badgeBg: "#450a0a",
-    badgeText: "#fca5a5",
+    label: "Flugverbot (No-Fly)", short: "NFZ", color: "#dc2626",
+    badgeBg: "#450a0a", badgeText: "#fca5a5",
     desc: "Absolutes Flugverbot für alle Drohnenkategorien. Keine Ausnahmen ohne behördliche Sondergenehmigung.",
     rules: ["Alle Kategorien: verboten", "Keine BVLOS-Ausnahme", "Gilt 24/7 ohne Zeitfenster"],
     cats: ["Kernkraftwerke", "Flughäfen (Radius <5 km)", "Staatliche Sicherheitsbereiche"],
   },
   RFZ: {
-    label: "Eingeschränkt (Restricted)",
-    short: "RFZ",
-    color: "#ea580c",
-    badgeBg: "#431407",
-    badgeText: "#fb923c",
+    label: "Eingeschränkt (Restricted)", short: "RFZ", color: "#ea580c",
+    badgeBg: "#431407", badgeText: "#fb923c",
     desc: "Nur bestimmte Kategorien erlaubt. Betrieb außerhalb bewohnter Gebiete nach EU-Kategorie A3 möglich.",
     rules: ["Kategorie A1/A2: verboten", "Kategorie A3: ggf. erlaubt", "Spezifisch: mit Genehmigung"],
     cats: ["Naturschutzgebiete", "Einsatzgebiete Behörden", "Militärische Übungsgebiete"],
   },
   GEO: {
-    label: "Geo-Awareness Zone",
-    short: "GEO",
-    color: "#d97706",
-    badgeBg: "#451a03",
-    badgeText: "#fcd34d",
+    label: "Geo-Awareness Zone", short: "GEO", color: "#d97706",
+    badgeBg: "#451a03", badgeText: "#fcd34d",
     desc: "Geo-Sensibilisierungszone nach EU 2019/945. Drohnen müssen Warnung anzeigen, Flug je nach Klasse möglich.",
     rules: ["Klasse C0: oft erlaubt", "Klasse C1–C3: Registrierung", "Fernpilot muss informiert sein"],
     cats: ["Stadtgebiete", "Infrastruktur-Korridore", "Veranstaltungszonen (temporär)"],
   },
   CTR: {
-    label: "Kontrollzone (CTR)",
-    short: "CTR",
-    color: "#2563eb",
-    badgeBg: "#0c1a4a",
-    badgeText: "#93c5fd",
+    label: "Kontrollzone (CTR)", short: "CTR", color: "#2563eb",
+    badgeBg: "#0c1a4a", badgeText: "#93c5fd",
     desc: "Luftraum rund um kontrollierten Flugplatz. Koordination mit ATC (Flugsicherung) zwingend erforderlich.",
     rules: ["Freigabe durch ATC nötig", "Transponder empfohlen", "NOTAM vor Flug prüfen"],
     cats: ["Flughafen CTR", "Militärflugplatz", "Heliports (Radius variabel)"],
   },
   STS: {
-    label: "Standard-Szenario (STS)",
-    short: "STS",
-    color: "#7c3aed",
-    badgeBg: "#2e1065",
-    badgeText: "#c4b5fd",
+    label: "Standard-Szenario (STS)", short: "STS", color: "#7c3aed",
+    badgeBg: "#2e1065", badgeText: "#c4b5fd",
     desc: "Betrieb nach EU-Standard-Szenario STS-01 oder STS-02. Fernpiloten-Zertifikat (A2 CofC) erforderlich.",
     rules: ["STS-01: VLOS, unbewohnt", "STS-02: BVLOS mit Beobachter", "A2 CofC Zertifikat Pflicht"],
     cats: ["Industrie-/Agrargebiete", "Infrastrukturinspektion", "Vermessungsflüge"],
   },
   TFR: {
-    label: "Temporäre Sperrung (TFR)",
-    short: "TFR",
-    color: "#db2777",
-    badgeBg: "#4a0520",
-    badgeText: "#f9a8d4",
+    label: "Temporäre Sperrung (TFR)", short: "TFR", color: "#db2777",
+    badgeBg: "#4a0520", badgeText: "#f9a8d4",
     desc: "Zeitlich begrenzte Sperrung (NOTAM). Gilt für Veranstaltungen, Notfalllagen oder VIP-Bewegungen.",
     rules: ["Zeitfenster in NOTAM prüfen", "Gilt nur für angegebene Periode", "Militär/Polizei ggf. ausgenommen"],
     cats: ["Grossveranstaltungen", "Katastropheneinsätze", "Staatsbesuche / Gipfel"],
@@ -87,27 +63,32 @@ export default function DroneMapClient() {
   const [selectedZone, setSelectedZone] = useState<any>(null);
   const [zoneCounts, setZoneCounts] = useState<Record<string, number>>({});
 
-  // Init map
+  // Init Leaflet map
   useEffect(() => {
     async function init() {
       const L = await import("leaflet");
       await import("leaflet/dist/leaflet.css");
       if (mapRef.current) return;
 
-      const map = L.map("map", { zoomControl: true, attributionControl: false }).setView([50.5, 10.5], 5);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(map);
+      const map = L.map("drone-map", {
+        zoomControl: true,
+        attributionControl: false,
+      }).setView([50.5, 10.5], 5);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+      }).addTo(map);
+
       mapRef.current = map;
     }
     init();
   }, []);
 
-  // Load/unload country layers
+  // Load / unload country layers
   useEffect(() => {
     async function load() {
       if (!mapRef.current) return;
-      const L = await import("leaflet");
 
-      // Load new countries
       for (const country of activeCountries) {
         if (layersRef.current[country]) continue;
 
@@ -121,21 +102,21 @@ export default function DroneMapClient() {
           style: (feature: any) => {
             const zt = ZONE_TYPES[feature.properties.zoneType as string];
             return {
-              color: zt?.color ?? "#888",
+              color: zt?.color ?? "#6b7280",
               weight: 1.5,
               fillOpacity: 0.2,
               opacity: 0.75,
             };
           },
-          onEachFeature: (feature: any, layer: any) => {
+          onEachFeature: (feature: any, lyr: any) => {
             count++;
-            layer.on("mouseover", function (this: any) {
+            lyr.on("mouseover", function (this: any) {
               this.setStyle({ fillOpacity: 0.38, weight: 2.5 });
             });
-            layer.on("mouseout", function (this: any) {
+            lyr.on("mouseout", function (this: any) {
               this.setStyle({ fillOpacity: 0.2, weight: 1.5 });
             });
-            layer.on("click", () => {
+            lyr.on("click", () => {
               setSelectedZone({ ...feature.properties, geometry: feature.geometry });
             });
           },
@@ -146,7 +127,6 @@ export default function DroneMapClient() {
         setZoneCounts((prev) => ({ ...prev, [country]: count }));
       }
 
-      // Remove deactivated countries
       for (const country of Object.keys(layersRef.current)) {
         if (!activeCountries.includes(country)) {
           mapRef.current.removeLayer(layersRef.current[country]);
@@ -154,7 +134,6 @@ export default function DroneMapClient() {
         }
       }
     }
-
     load();
   }, [activeCountries]);
 
@@ -162,16 +141,18 @@ export default function DroneMapClient() {
     import("leaflet").then((L) => {
       if (!mapRef.current) return;
       const bounds = L.geoJSON(geometry).getBounds();
-      mapRef.current.flyTo(bounds.getCenter(), 13, { animate: true, duration: 1.4, easeLinearity: 0.25 });
+      mapRef.current.flyTo(bounds.getCenter(), 13, {
+        animate: true,
+        duration: 1.4,
+        easeLinearity: 0.25,
+      });
     });
   }
 
-  const totalZones = Object.values(zoneCounts)
-    .filter((_, i) => activeCountries.includes(Object.keys(zoneCounts)[i]))
-    .reduce((a, b) => a + b, 0);
+  const totalZones = activeCountries.reduce((sum, c) => sum + (zoneCounts[c] ?? 0), 0);
 
   return (
-    <div className="flex h-screen w-full relative bg-[#0a0e1a]">
+    <div style={{ display: "flex", height: "100vh", width: "100%", background: "#0a0e1a", position: "relative" }}>
       <Sidebar
         activeCountries={activeCountries}
         setActiveCountries={setActiveCountries}
@@ -180,20 +161,15 @@ export default function DroneMapClient() {
         zoneCounts={zoneCounts}
       />
 
-      <div className="flex-1 relative">
+      <div style={{ flex: 1, position: "relative" }}>
         {/* Stats bar */}
-        <div className="absolute top-3 left-3 z-[500] flex gap-2">
-          <div className="bg-[rgba(13,18,32,0.92)] border border-white/10 rounded-md px-3 py-1 text-xs text-white/70 backdrop-blur-sm">
-            <span className="font-mono text-white font-bold mr-1">{totalZones}</span>Zonen
-          </div>
-          <div className="bg-[rgba(13,18,32,0.92)] border border-white/10 rounded-md px-3 py-1 text-xs text-white/70 backdrop-blur-sm">
-            <span className="font-mono text-white font-bold mr-1">{activeCountries.length}</span>Länder
-          </div>
+        <div style={{ position: "absolute", top: 12, left: 12, zIndex: 500, display: "flex", gap: 8 }}>
+          <StatChip value={totalZones} label="Zonen" />
+          <StatChip value={activeCountries.length} label="Länder" />
         </div>
 
-        <div id="map" className="w-full h-full" />
+        <div id="drone-map" style={{ width: "100%", height: "100%" }} />
 
-        {/* Info panel */}
         {selectedZone && (
           <ZonePanel
             zone={selectedZone}
@@ -206,60 +182,87 @@ export default function DroneMapClient() {
   );
 }
 
+function StatChip({ value, label }: { value: number; label: string }) {
+  return (
+    <div style={{
+      background: "rgba(13,18,32,0.92)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: 6,
+      padding: "4px 10px",
+      fontSize: 11,
+      color: "rgba(255,255,255,0.65)",
+    }}>
+      <strong style={{ color: "#fff", fontFamily: "monospace", marginRight: 4 }}>{value}</strong>
+      {label}
+    </div>
+  );
+}
+
 function ZonePanel({ zone, onClose, onZoom }: { zone: any; onClose: () => void; onZoom: () => void }) {
   const ti = ZONE_TYPES[zone.zoneType as string];
   if (!ti) return null;
 
   return (
-    <div className="absolute bottom-4 right-4 w-[272px] z-[9999] bg-[#0d1220] border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2 px-4 py-3 border-b border-white/[0.06]">
+    <div style={{
+      position: "absolute", bottom: 16, right: 16, width: 272, zIndex: 9999,
+      background: "#0d1220", border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: 10, overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+    }}>
+      <div style={{
+        display: "flex", alignItems: "flex-start", justifyContent: "space-between",
+        gap: 8, padding: "12px 14px 10px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+      }}>
         <div>
-          <span
-            className="inline-block text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded mb-1"
-            style={{ background: ti.badgeBg, color: ti.badgeText }}
-          >
+          <span style={{
+            display: "inline-block", fontSize: 9, fontWeight: 700,
+            letterSpacing: "0.1em", textTransform: "uppercase",
+            padding: "2px 7px", borderRadius: 3,
+            background: ti.badgeBg, color: ti.badgeText, marginBottom: 5,
+          }}>
             {ti.short}
           </span>
-          <p className="text-[13px] font-semibold text-white leading-tight">{zone.name}</p>
+          <p style={{ fontSize: 13, fontWeight: 600, color: "#fff", lineHeight: 1.25 }}>
+            {zone.name}
+          </p>
         </div>
-        <button
-          onClick={onClose}
-          className="mt-0.5 w-5 h-5 rounded bg-white/[0.07] hover:bg-white/[0.12] text-white/40 hover:text-white text-xs flex items-center justify-center flex-shrink-0"
-        >
-          ✕
-        </button>
+        <button onClick={onClose} style={{
+          width: 20, height: 20, borderRadius: 4, border: "none",
+          background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.45)",
+          cursor: "pointer", fontSize: 13, flexShrink: 0,
+        }}>✕</button>
       </div>
 
-      {/* Body */}
-      <div className="px-4 py-3 space-y-2">
+      <div style={{ padding: "11px 14px 4px" }}>
         <InfoRow label="Kategorie" value={ti.label} />
         <InfoRow label="Land" value={zone.country} />
         <InfoRow label="Max. Höhe" value={zone.height ?? "—"} />
         <InfoRow label="Quelle" value={zone.source ?? "—"} />
         {zone.description && (
-          <p className="text-[11px] text-white/45 leading-relaxed pt-2 border-t border-white/[0.06]">
+          <p style={{
+            fontSize: 11, color: "rgba(255,255,255,0.45)", lineHeight: 1.55,
+            marginTop: 6, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.06)",
+          }}>
             {zone.description}
           </p>
         )}
       </div>
 
-      {/* Rules */}
-      <div className="px-4 pb-2 border-t border-white/[0.06] pt-2 space-y-1.5">
+      <div style={{ padding: "8px 14px 4px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         {ti.rules.map((r, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: ti.color }} />
-            <span className="text-[10px] text-white/50">{r}</span>
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: ti.color, flexShrink: 0 }} />
+            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>{r}</span>
           </div>
         ))}
       </div>
 
-      {/* Zoom button */}
-      <div className="px-4 pb-4 pt-2">
-        <button
-          onClick={onZoom}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-medium py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
-        >
+      <div style={{ padding: "8px 14px 12px" }}>
+        <button onClick={onZoom} style={{
+          width: "100%", background: "#2563eb", color: "#fff",
+          border: "none", borderRadius: 6, padding: "8px 0",
+          fontSize: 12, fontWeight: 500, cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+        }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
           </svg>
@@ -272,9 +275,11 @@ function ZonePanel({ zone, onClose, onZoom }: { zone: any; onClose: () => void; 
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between items-start">
-      <span className="text-[11px] text-white/35">{label}</span>
-      <span className="text-[11px] text-white/80 font-medium text-right max-w-[150px] leading-tight">{value}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 7 }}>
+      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{label}</span>
+      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", fontWeight: 500, textAlign: "right", maxWidth: 150, lineHeight: 1.3 }}>
+        {value}
+      </span>
     </div>
   );
 }

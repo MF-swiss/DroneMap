@@ -3,18 +3,18 @@
 import { ZONE_TYPES } from "./DroneMapClient";
 
 const ALL_COUNTRIES = [
-  { code: "CH", name: "Schweiz",      flag: "🇨🇭" },
-  { code: "DE", name: "Deutschland",  flag: "🇩🇪" },
-  { code: "AT", name: "Österreich",   flag: "🇦🇹" },
-  { code: "FR", name: "Frankreich",   flag: "🇫🇷" },
-  { code: "IT", name: "Italien",       flag: "🇮🇹" },
-  { code: "ES", name: "Spanien",       flag: "🇪🇸" },
-  { code: "NL", name: "Niederlande",  flag: "🇳🇱" },
-  { code: "BE", name: "Belgien",       flag: "🇧🇪" },
-  { code: "DK", name: "Dänemark",     flag: "🇩🇰" },
-  { code: "NO", name: "Norwegen",     flag: "🇳🇴" },
-  { code: "SE", name: "Schweden",     flag: "🇸🇪" },
-  { code: "FI", name: "Finnland",     flag: "🇫🇮" },
+  { code: "CH", name: "Schweiz",     flag: "🇨🇭" },
+  { code: "DE", name: "Deutschland", flag: "🇩🇪" },
+  { code: "AT", name: "Österreich",  flag: "🇦🇹" },
+  { code: "FR", name: "Frankreich",  flag: "🇫🇷" },
+  { code: "IT", name: "Italien",     flag: "🇮🇹" },
+  { code: "ES", name: "Spanien",     flag: "🇪🇸" },
+  { code: "NL", name: "Niederlande", flag: "🇳🇱" },
+  { code: "BE", name: "Belgien",     flag: "🇧🇪" },
+  { code: "DK", name: "Dänemark",   flag: "🇩🇰" },
+  { code: "NO", name: "Norwegen",   flag: "🇳🇴" },
+  { code: "SE", name: "Schweden",   flag: "🇸🇪" },
+  { code: "FI", name: "Finnland",   flag: "🇫🇮" },
 ];
 
 type Props = {
@@ -25,13 +25,53 @@ type Props = {
   zoneCounts: Record<string, number>;
 };
 
-export default function Sidebar({
-  activeCountries,
-  setActiveCountries,
-  activeTypes,
-  setActiveTypes,
-  zoneCounts,
-}: Props) {
+const S = {
+  sidebar: {
+    width: 230, minWidth: 230, background: "#0d1220",
+    borderRight: "1px solid rgba(255,255,255,0.07)",
+    display: "flex" as const, flexDirection: "column" as const,
+    height: "100vh", zIndex: 50, overflowY: "hidden" as const,
+  },
+  header: {
+    padding: "14px 14px 10px",
+    borderBottom: "1px solid rgba(255,255,255,0.06)",
+  },
+  logoRow: { display: "flex" as const, alignItems: "center", gap: 8, marginBottom: 2 },
+  logoIcon: {
+    width: 26, height: 26, background: "#2563eb", borderRadius: 5,
+    display: "flex" as const, alignItems: "center", justifyContent: "center",
+  },
+  logoText: { fontSize: 13, fontWeight: 600, color: "#fff", letterSpacing: "0.02em" },
+  subtitle: { fontSize: 9, color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", textTransform: "uppercase" as const, marginTop: 2 },
+  sectionLabel: {
+    fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const,
+    color: "rgba(255,255,255,0.25)", padding: "10px 14px 5px",
+  },
+  scrollBox: { padding: "0 10px", overflowY: "auto" as const },
+  countryBtn: (on: boolean): React.CSSProperties => ({
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    width: "100%", padding: "6px 8px", borderRadius: 5, border: "none",
+    background: on ? "rgba(37,99,235,0.16)" : "transparent",
+    cursor: "pointer", marginBottom: 2,
+  }),
+  check: (on: boolean): React.CSSProperties => ({
+    width: 13, height: 13, borderRadius: 3, flexShrink: 0,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    background: on ? "#2563eb" : "transparent",
+    border: on ? "1px solid #2563eb" : "1px solid rgba(255,255,255,0.15)",
+  }),
+  countryName: (on: boolean): React.CSSProperties => ({
+    fontSize: 12, color: on ? "#93bbff" : "rgba(255,255,255,0.65)",
+    fontWeight: on ? 500 : 400,
+  }),
+  badge: (on: boolean): React.CSSProperties => ({
+    fontSize: 10, fontFamily: "monospace", padding: "1px 5px", borderRadius: 3,
+    background: on ? "rgba(37,99,235,0.28)" : "rgba(255,255,255,0.05)",
+    color: on ? "#93bbff" : "rgba(255,255,255,0.28)",
+  }),
+};
+
+export default function Sidebar({ activeCountries, setActiveCountries, activeTypes, setActiveTypes, zoneCounts }: Props) {
 
   function toggleCountry(code: string) {
     setActiveCountries((prev) =>
@@ -46,85 +86,70 @@ export default function Sidebar({
   }
 
   return (
-    <div className="w-[230px] min-w-[230px] bg-[#0d1220] border-r border-white/[0.07] flex flex-col h-screen z-50">
-
+    <div style={S.sidebar}>
       {/* Logo */}
-      <div className="px-4 py-3.5 border-b border-white/[0.06]">
-        <div className="flex items-center gap-2 mb-0.5">
-          <div className="w-[26px] h-[26px] bg-blue-600 rounded-[5px] flex items-center justify-center">
+      <div style={S.header}>
+        <div style={S.logoRow}>
+          <div style={S.logoIcon}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
           </div>
-          <span className="text-[13px] font-semibold text-white tracking-wide">DroneMap EU</span>
+          <span style={S.logoText}>DroneMap EU</span>
         </div>
-        <p className="text-[9px] text-white/30 tracking-[0.08em] uppercase">EU 2019/947 Luftraumklassen</p>
+        <p style={S.subtitle}>EU 2019/947 Luftraumklassen</p>
       </div>
 
       {/* Countries */}
-      <div className="text-[9px] font-semibold tracking-[0.1em] uppercase text-white/25 px-4 pt-3 pb-1.5">
-        Länder
-      </div>
-      <div className="px-2.5 overflow-y-auto max-h-[190px] scrollbar-thin">
+      <p style={S.sectionLabel}>Länder</p>
+      <div style={{ ...S.scrollBox, maxHeight: 200 }}>
         {ALL_COUNTRIES.map((c) => {
           const on = activeCountries.includes(c.code);
           return (
-            <button
-              key={c.code}
-              onClick={() => toggleCountry(c.code)}
-              className={`flex items-center justify-between w-full px-2 py-1.5 rounded-md mb-0.5 transition-colors ${
-                on ? "bg-blue-600/16" : "hover:bg-white/5"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-[3px] border flex items-center justify-center flex-shrink-0 ${
-                  on ? "bg-blue-600 border-blue-600" : "border-white/15"
-                }`}>
+            <button key={c.code} onClick={() => toggleCountry(c.code)} style={S.countryBtn(on)}>
+              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                <div style={S.check(on)}>
                   {on && (
                     <svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5">
                       <polyline points="1.5,6 5,9.5 10.5,2.5"/>
                     </svg>
                   )}
                 </div>
-                <span className="text-base leading-none">{c.flag}</span>
-                <span className={`text-[12px] ${on ? "text-blue-300 font-medium" : "text-white/65"}`}>
-                  {c.name}
-                </span>
+                <span style={{ fontSize: 15, lineHeight: 1 }}>{c.flag}</span>
+                <span style={S.countryName(on)}>{c.name}</span>
               </div>
-              <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-[3px] ${
-                on ? "bg-blue-600/30 text-blue-300" : "bg-white/5 text-white/28"
-              }`}>
-                {zoneCounts[c.code] ?? "—"}
-              </span>
+              <span style={S.badge(on)}>{zoneCounts[c.code] ?? "—"}</span>
             </button>
           );
         })}
       </div>
 
       {/* Zone types */}
-      <div className="text-[9px] font-semibold tracking-[0.1em] uppercase text-white/25 px-4 pt-3 pb-1.5">
-        Zonenklassen
-      </div>
-      <div className="px-2.5 flex-1 overflow-y-auto scrollbar-thin pb-4">
+      <p style={S.sectionLabel}>Zonenklassen</p>
+      <div style={{ ...S.scrollBox, flex: 1, paddingBottom: 12 }}>
         {Object.entries(ZONE_TYPES).map(([id, zt]) => {
           const on = activeTypes.includes(id);
           return (
             <div
               key={id}
               onClick={() => toggleType(id)}
-              className={`flex items-start gap-2 px-2 py-2 rounded-md mb-1 cursor-pointer border transition-all ${
-                on
-                  ? "bg-white/[0.06] border-white/[0.08]"
-                  : "border-transparent opacity-40 hover:opacity-60"
-              }`}
+              style={{
+                display: "flex", alignItems: "flex-start", gap: 8,
+                padding: "7px 8px", borderRadius: 6, marginBottom: 3, cursor: "pointer",
+                background: on ? "rgba(255,255,255,0.06)" : "transparent",
+                border: on ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
+                opacity: on ? 1 : 0.4,
+              }}
             >
-              <div
-                className="w-2.5 h-2.5 rounded-[2px] flex-shrink-0 mt-[3px]"
-                style={{ background: zt.color }}
-              />
+              <div style={{
+                width: 10, height: 10, borderRadius: 2, flexShrink: 0, marginTop: 2,
+                background: zt.color,
+              }} />
               <div>
-                <div className="text-[11px] text-white/75 font-medium leading-tight">{zt.label}</div>
-                <div className="text-[10px] text-white/35 leading-tight mt-0.5">
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.75)", fontWeight: 500, lineHeight: 1.3 }}>
+                  {zt.label}
+                </div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", lineHeight: 1.3, marginTop: 1 }}>
                   {zt.cats.slice(0, 2).join(" · ")}
                 </div>
               </div>

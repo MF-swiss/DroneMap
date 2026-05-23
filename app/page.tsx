@@ -1,11 +1,11 @@
 "use client";
 
-import DroneMap from "@/components/DroneMap";
+import DroneMapClient from "@/components/DroneMapClient";
 
 export default function Page() {
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      <DroneMap />
+    <div style={{ height: "100vh", width: "100vw", overflow: "hidden" }}>
+      <DroneMapClient />
     </div>
   );
 }
